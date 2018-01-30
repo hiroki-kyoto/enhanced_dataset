@@ -1,0 +1,34 @@
+======Before cropping with SSD model==========
+=== Alexnet ===
+                Category          Recall        Precision
+           051-Destroyer            8.33%          10.00%
+           052-Destroyer           25.00%          20.00%
+           053H1-Frigate           25.00%          23.08%
+            054A-Frigate            8.33%           8.33%
+             056-Frigate           41.67%          55.56%
+           Supply-Vessel            8.33%           7.69%
+Overall accuracy:       19.44%
+
+=== Resnet ===
+
+
+
+=== HLN ===
+
+
+
+======After cropping with SSD model===========
+=== Alexnet ===
+                Category          Recall        Precision
+           051-Destroyer           30.00%          16.67%
+           052-Destroyer           33.33%          30.77%
+           053H1-Frigate           16.67%          28.57%
+            054A-Frigate            8.33%          10.00%
+             056-Frigate           50.00%          46.15%
+           Supply-Vessel            0.00%           0.00%
+Overall accuracy:       22.86%
+
+=== Resnet ===
+
+
+=== HLN ===
