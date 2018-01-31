@@ -10,8 +10,15 @@
 Overall accuracy:       19.44%
 
 === Resnet ===
-
-
+Test results:
+                Category          Recall        Precision
+           051-Destroyer           16.67%          25.00%
+           052-Destroyer            8.33%          16.67%
+           053H1-Frigate           75.00%          30.00%
+            054A-Frigate           66.67%          36.36%
+             056-Frigate           25.00%          50.00%
+           Supply-Vessel            0.00%           0.00%
+Overall accuracy:       31.94%
 
 === HLN ===
 
@@ -19,16 +26,25 @@ Overall accuracy:       19.44%
 
 ======After cropping with SSD model===========
 === Alexnet ===
+Test results:
                 Category          Recall        Precision
-           051-Destroyer           30.00%          16.67%
-           052-Destroyer           33.33%          30.77%
-           053H1-Frigate           16.67%          28.57%
-            054A-Frigate            8.33%          10.00%
-             056-Frigate           50.00%          46.15%
-           Supply-Vessel            0.00%           0.00%
-Overall accuracy:       22.86%
+           051-Destroyer           30.00%          23.08%
+           052-Destroyer           16.67%          28.57%
+           053H1-Frigate           33.33%          23.53%
+            054A-Frigate           16.67%          25.00%
+             056-Frigate           50.00%          50.00%
+           Supply-Vessel           16.67%          15.38%
+Overall accuracy:       27.14%
 
 === Resnet ===
-
+Test results:
+                Category          Recall        Precision
+           051-Destroyer           10.00%          14.29%
+           052-Destroyer            8.33%          33.33%
+           053H1-Frigate           91.67%          40.74%
+            054A-Frigate           50.00%          75.00%
+             056-Frigate           91.67%          45.83%
+           Supply-Vessel            0.00%           0.00%
+Overall accuracy:       42.86%
 
 === HLN ===

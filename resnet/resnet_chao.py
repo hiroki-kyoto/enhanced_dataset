@@ -1,11 +1,12 @@
 # -*- coding:utf8 -*-
 # resnet_test.py
 # using well trained resnet tensorflow model
-# from ./model/small/ to restore a model in 
+# from $MODEL_PATH to restore a model in
 # memory and run test with ship dataset
 
 from resnet.resnet import *
 from PIL import Image
+import numpy as np
 
 class ResNetLoader:
     def __init__(self, model_path):
@@ -51,33 +52,29 @@ class ResNetLoader:
             print(self.classifier)
             self.ready = True
         
-        self.im_w = 48 # width
-        self.im_h = 32 # height
-        self.im_c = 3 # channel
+        self.im_w = W # width
+        self.im_h = H # height
 
     def classify(self, img):
         im = img.resize(
-                [self.im_w, self.im_h], 
+                [self.im_w, self.im_h],
                 Image.ANTIALIAS
         )
-        im_data = np.array(im)
+        im_data = np.array(im, dtype=np.float32)
+        assert len(im_data.shape)==3 and im_data.shape[2]==3
         im_data = np.reshape(
                 im_data, 
-                [1, self.im_h, self.im_w, self.im_c]
+                [1, self.im_h, self.im_w, 3]
         )
-        im_data = im_data.astype(np.float32)
-        im_data = np.multiply(im_data, 1.0/255.0)
-        
         with self.graph.as_default():
             test_input_fn = tf.estimator.inputs.numpy_input_fn(
-                    x={X_FEATURE: im_data},
+                    x={INPUT_NAME: im_data},
                     y=np.zeros([1]),
                     num_epochs=1,
                     shuffle=False
             )
             res = self.classifier.predict(input_fn = test_input_fn)
             label_id = 0
-            prob = 0.0
             for i in res:
                 label_id = i['class']
         #return self.labels[label_id]

@@ -10,12 +10,11 @@ import tensorflow as tf
 
 N_DIGITS = 6  # Number of digits.
 INPUT_NAME = 'x'
-W = 256
-H = 256
+W = 227
+H = 227
 
 def res_net_model(features, labels, mode):
   """Builds a residual network."""
-
   # Configurations for each bottleneck group.
   BottleneckGroup = namedtuple('BottleneckGroup',
                                ['num_blocks', 'num_filters', 'bottleneck_size'])
@@ -132,7 +131,7 @@ def res_net_model(features, labels, mode):
 
   # Create training op.
   if mode == tf.estimator.ModeKeys.TRAIN:
-    optimizer = tf.train.AdagradOptimizer(learning_rate=0.01)
+    optimizer = tf.train.AdagradOptimizer(learning_rate=0.001)
     train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
     return tf.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
 
@@ -143,4 +142,3 @@ def res_net_model(features, labels, mode):
   }
   return tf.estimator.EstimatorSpec(
       mode, loss=loss, eval_metric_ops=eval_metric_ops)
-

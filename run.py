@@ -13,8 +13,8 @@ import numpy as np
 
 # Training
 root_dir = 'C:/Users/work/Desktop/shigoto/ship-detection'
-train_dir = root_dir + '/train/'
-test_dir = root_dir + '/test/'
+train_dir = root_dir + '/train_crop/'
+test_dir = root_dir + '/test_crop/'
 alexnet_log_dir = root_dir + '/alexnet_log/'
 resnet_log_dir = root_dir + '/resnet_log/'
 
@@ -33,9 +33,9 @@ elif sys.argv[1]=='test':
         dirs = os.listdir(test_dir)
         dirs.sort()
         images, labels = alexnet_input_data.get_files(test_dir)
-        correct_num = np.zeros(max(labels)+1)
-        expected_num = np.zeros(max(labels)+1)
-        predicted_num = np.zeros(max(labels)+1)
+        correct_num = np.zeros(len(dirs))
+        expected_num = np.zeros(len(dirs))
+        predicted_num = np.zeros(len(dirs))
         for i in range(len(images)):
             pred = _loader.classify_with_im_path(images[i])
             if pred == labels[i]:
@@ -68,6 +68,25 @@ elif sys.argv[1]=='test':
                     pi.open(os.path.join(subdir, fn))
                 )
                 labels.append(i)
-        _loader.classify(images[0])
+        correct_num = np.zeros(len(dirs))
+        expected_num = np.zeros(len(dirs))
+        predicted_num = np.zeros(len(dirs))
+        for i in range(len(images)):
+            pred = _loader.classify(images[i])
+            if pred == labels[i]:
+                correct_num[pred] += 1
+            expected_num[labels[i]] += 1
+            predicted_num[pred] += 1
+        print("Test results:")
+        print("\t%16s\t%8s\t%8s" % ("Category", "Recall", "Precision"))
+        for i in range(len(correct_num)):
+            expected = max(expected_num[i], 1)
+            predicted = max(predicted_num[i], 1)
+            correct = correct_num[i]
+            print("\t%16s\t%8.2f%%\t%8.2f%%" % (
+                dirs[i],
+                100.0 * correct / expected,
+                100.0 * correct / predicted))
+        print("Overall accuracy:\t%.2f%%" % (100.0 * sum(correct_num) / sum(expected_num)))
     else:
         assert(False)
