@@ -1,0 +1,11 @@
+VGG-16 ANALYSIS:
+LAYER	:	L
+FILTER	:	F
+
+[index starts from 0]
+/L:CONV1_1/F:1		Extract the edge of objects
+/L:CONV1_1/F:10		Separate cat from background
+/L:CONV1_1/F:12		Extract grass land background and with edge curved
+/L:CONV1_1/F:13		A better extraction of grass land without edge curved
+/L:CONV1_1/F:16		Extract only ears, eyes.
+/L:CONV1_1/F:17		Cut the grass land background off and the eyes of cat.

@@ -49,7 +49,7 @@ class ShipNet(object):
                 [1, 1, 1, 1],
                 padding='SAME'
             )
-            self.conv1_2 = tf.nn.bias_add(self.conv1_1, self.conv1_2_b)
+            self.conv1_2 = tf.nn.bias_add(self.conv1_2, self.conv1_2_b)
             self.conv1_2 = tf.nn.relu(self.conv1_2)
 
             # add a pooling layer
@@ -80,7 +80,12 @@ def main():
     im = im.resize([IMG_W,IMG_H])
     x = np.array(im, np.float32)
     x = np.reshape(x, [1, IMG_H, IMG_W, IMG_C])
-    y = net.run(x)
-    im = pi.fromarray(y[0,:,:,1])
-    im.show('Pooling#1')
+    y = net.run_part(net.x, net.conv1_2, x)
+    y = y[0]
+    y = np.transpose(y, [2,0,1])
+    for filter_id in range(y.shape[0]):
+        im = pi.fromarray(y[filter_id])
+        im = im.convert('RGB')
+        fp = '../../tensorflow-vgg16-master/filter-analysis/L1_2/%s.jpg' % (filter_id+1)
+        im.save(fp)
 main()
