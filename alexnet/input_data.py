@@ -42,11 +42,14 @@ def get_batches_with_onehot(
 ):
     images = tf.cast(images, tf.string)
     labels = tf.cast(labels, tf.int32)
-    onehots = tf.one_hot(labels, N_CLASS, on_value=1.0, off_value=0.0, axis=0)
+    onehots = tf.one_hot(labels, N_CLASS, on_value=1.0, off_value=0.0)
     queues = tf.train.slice_input_producer([images, onehots])
     labels = queues[1]
     images_binary = tf.read_file(queues[0])
-    images_decoded = tf.image.decode_jpeg(images_binary)
+    images_decoded = tf.image.decode_jpeg(
+        images_binary,
+        channels=3
+    )
     images = tf.image.resize_image_with_crop_or_pad(
         images_decoded,
         resize_w,

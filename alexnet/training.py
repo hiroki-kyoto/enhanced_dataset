@@ -13,6 +13,8 @@ BATCH_SIZE = 8
 CAPACITY = 200
 MAX_STEP = 10000
 learning_rate = 0.001
+PRINT_STEP = 30
+SAVE_STEP = 500
 
 def train(train_dir, logs_train_dir):
   train, train_label = input_data.get_files(train_dir)
@@ -47,12 +49,12 @@ def train(train_dir, logs_train_dir):
           if coord.should_stop():
                   break
           _, tra_loss, tra_acc = sess.run([train_op, train_loss, train_acc])
-          if step % 10 == 0:
+          if step % PRINT_STEP == 0:
               print('Step %d, train loss = %.5f, train accuracy = %.5f%%' %(
                   step, tra_loss, tra_acc*100.0))
               summary_str = sess.run(summary_op)
               train_writer.add_summary(summary_str, step)
-          if step % 100 == 0 or (step + 1) == MAX_STEP:
+          if step % SAVE_STEP == 0 or (step + 1) == MAX_STEP:
               checkpoint_path = os.path.join(logs_train_dir, 'model.ckpt')
               saver.save(sess, checkpoint_path, global_step=step)
   except tf.errors.OutOfRangeError:

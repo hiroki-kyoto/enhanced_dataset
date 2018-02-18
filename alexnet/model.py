@@ -236,7 +236,8 @@ def losses_with_onehot(logits, onehot):
         logits_dif = tf.maximum(logits_dif, 1.0)
         logits_std = (logits - logits_min) / logits_dif
         err = logits_std - onehot
-        loss = tf.reduce_mean(tf.square(err, axis=[1]), name='loss-mean')
+        err = tf.reduce_sum(tf.square(err), axis=[1])
+        loss = tf.reduce_mean(err, name='loss-mean')
         tf.summary.scalar(scope.name + '/mean-loss', loss)
         return loss
 
@@ -250,7 +251,7 @@ def training(loss, learning_rate):
 
 def evaluation(logits, onehot):
     with tf.variable_scope('accuracy') as scope:
-        labels = tf.argmax(onehot, axis=[1])
+        labels = tf.argmax(onehot, axis=1)
         top_1 = tf.nn.in_top_k(logits, labels, 1)
         top_2 = tf.nn.in_top_k(logits, labels, 2)
         top_3 = tf.nn.in_top_k(logits, labels, 3)
