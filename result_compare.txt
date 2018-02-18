@@ -36,6 +36,29 @@ Test results:
            Supply-Vessel           16.67%          15.38%
 Overall accuracy:       27.14%
 
+######## using L2 loss #############
+Test results:
+                Category          Recall        Precision
+           051-Destroyer           40.00%          20.00%
+           052-Destroyer            8.33%          14.29%
+           053H1-Frigate            8.33%          14.29%
+            054A-Frigate           25.00%          33.33%
+             056-Frigate           50.00%          40.00%
+           Supply-Vessel           16.67%          16.67%
+Overall accuracy:       24.29%
+
+                Category          Recall        Precision
+           051-Destroyer           20.00%          25.00%
+           052-Destroyer           25.00%          30.00%
+           053H1-Frigate           25.00%          21.43%
+            054A-Frigate           25.00%          20.00%
+             056-Frigate           25.00%          27.27%
+           Supply-Vessel            8.33%           8.33%
+Overall accuracy:       21.43%
+
+
+
+
 === Resnet ===
 Test results:
                 Category          Recall        Precision

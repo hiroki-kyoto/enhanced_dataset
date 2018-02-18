@@ -1,5 +1,4 @@
 #coding=utf-8
-import numpy as np
 import tensorflow as tf
 import os
 
@@ -32,3 +31,34 @@ def get_batches(image,label,resize_w,resize_h,batch_size,capacity):
     labels_batch = tf.reshape(label_batch, [batch_size])
     return image_batch, labels_batch
   
+def get_batches_with_onehot(
+        images,
+        labels,
+        resize_w,
+        resize_h,
+        batch_size,
+        capacity,
+        N_CLASS
+):
+    images = tf.cast(images, tf.string)
+    labels = tf.cast(labels, tf.int32)
+    onehots = tf.one_hot(labels, N_CLASS, on_value=1.0, off_value=0.0, axis=0)
+    queues = tf.train.slice_input_producer([images, onehots])
+    labels = queues[1]
+    images_binary = tf.read_file(queues[0])
+    images_decoded = tf.image.decode_jpeg(images_binary)
+    images = tf.image.resize_image_with_crop_or_pad(
+        images_decoded,
+        resize_w,
+        resize_h
+    )
+    images = tf.image.per_image_standardization(images)
+    image_batches, label_batches = tf.train.batch(
+        [images, labels],
+        batch_size=batch_size,
+        num_threads=64,
+        capacity=capacity
+    )
+    image_batches = tf.cast(image_batches, tf.float32)
+    label_batches = tf.reshape(label_batches, [batch_size, N_CLASS])
+    return image_batches, label_batches

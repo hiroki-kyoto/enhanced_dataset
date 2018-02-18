@@ -80,12 +80,12 @@ def main():
     im = im.resize([IMG_W,IMG_H])
     x = np.array(im, np.float32)
     x = np.reshape(x, [1, IMG_H, IMG_W, IMG_C])
-    y = net.run_part(net.x, net.pool1, x)
+    y = net.run_part(net.x, net.conv1_2, x)
     y = y[0]
     y = np.transpose(y, [2,0,1])
     for filter_id in range(y.shape[0]):
         im = pi.fromarray(y[filter_id])
         im = im.convert('RGB')
-        fp = '../../NOW/vgg16/filter-analysis/cat/P1/%s.jpg' % (filter_id+1)
+        fp = '../../NOW/vgg16/filter-analysis/cat/L1_2/%s.jpg' % (filter_id+1)
         im.save(fp)
 main()

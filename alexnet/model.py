@@ -1,6 +1,7 @@
 #coding=utf-8
 import tensorflow as tf
 
+
 def inference4train(train_batch, n_classes):
     with tf.variable_scope("weights"):
         weights = {
@@ -212,70 +213,9 @@ def inference4train(train_batch, n_classes):
     fc2 = tf.matmul(fc_relu1, weights['fc2']) + biases['fc2']
     fc_relu2 = tf.nn.relu(fc2)
     fc3 = tf.matmul(fc_relu2, weights['fc3']) + biases['fc3']
+    #fc_relu3 = tf.nn.relu(fc3)
     return fc3
 
-def inference(n_classes):
-
-    with tf.variable_scope("weights"):
-        weights = {
-
-            # 39*39*3->36*36*20->18*18*20
-
-            'conv1': tf.get_variable('conv1', [11, 11, 3, 16],
-                                     initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-            # 18*18*20->16*16*40->8*8*40
-
-            'conv2': tf.get_variable('conv2', [5, 5, 16, 16],
-                                     initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-            # 8*8*40->6*6*60->3*3*60
-
-            'conv3': tf.get_variable('conv3', [3, 3, 16, 2],
-                                     initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-            # 3*3*60->120
-
-            'conv4': tf.get_variable('conv4', [3, 3, 2, 2],
-                                     initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-            'conv5': tf.get_variable('conv5', [3, 3, 2, 2],
-                                     initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-            'fc1': tf.get_variable('fc1', [6 * 6 * 2, 10], initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-            'fc2': tf.get_variable('fc2', [10, 10], initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-            # 120->6
-
-            'fc3': tf.get_variable('fc3', [10, n_classes], initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32)),
-
-        }
-
-    with tf.variable_scope("biases"):
-        biases = {
-
-            'conv1': tf.get_variable('conv1', [16, ], initializer=tf.constant_initializer(value=0.0, dtype=tf.float32)),
-
-            'conv2': tf.get_variable('conv2', [16, ],
-                                     initializer=tf.constant_initializer(value=0.0, dtype=tf.float32)),
-
-            'conv3': tf.get_variable('conv3', [2, ],
-                                     initializer=tf.constant_initializer(value=0.0, dtype=tf.float32)),
-
-            'conv4': tf.get_variable('conv4', [2, ],
-                                     initializer=tf.constant_initializer(value=0.0, dtype=tf.float32)),
-
-            'conv5': tf.get_variable('conv5', [2, ],
-                                     initializer=tf.constant_initializer(value=0.0, dtype=tf.float32)),
-
-            'fc1': tf.get_variable('fc1', [10, ], initializer=tf.constant_initializer(value=0.0, dtype=tf.float32)),
-
-            'fc2': tf.get_variable('fc2', [10, ], initializer=tf.constant_initializer(value=0.0, dtype=tf.float32)),
-
-            'fc3': tf.get_variable('fc3', [n_classes, ], initializer=tf.constant_initializer(value=0.0, dtype=tf.float32))
-
-        }
 
 def losses(logits, labels):
     with tf.variable_scope('loss') as scope:
@@ -285,18 +225,39 @@ def losses(logits, labels):
         tf.summary.scalar(scope.name + '/loss', loss)
     return loss
 
-def trainning(loss, learning_rate):
+
+def losses_with_onehot(logits, onehot):
+    with tf.variable_scope('loss') as scope:
+        logits_max = tf.reduce_max(logits, axis=[1])
+        logits_max = tf.reshape(logits_max, [logits_max.shape[0], 1])
+        logits_min = tf.reduce_min(logits, axis=[1])
+        logits_min = tf.reshape(logits_min, [logits_min.shape[0], 1])
+        logits_dif = logits_max - logits_min
+        logits_dif = tf.maximum(logits_dif, 1.0)
+        logits_std = (logits - logits_min) / logits_dif
+        err = logits_std - onehot
+        loss = tf.reduce_mean(tf.square(err, axis=[1]), name='loss-mean')
+        tf.summary.scalar(scope.name + '/mean-loss', loss)
+        return loss
+
+def training(loss, learning_rate):
     with tf.name_scope('optimizer'):
         optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
         global_step = tf.Variable(0, name='global_step', trainable=False)
         train_op = optimizer.minimize(loss, global_step=global_step)
     return train_op
 
-def evaluation(logits, labels):
-    with tf.variable_scope('accuracy') as scope:
-        correct = tf.nn.in_top_k(logits, labels, 1)
-        correct = tf.cast(correct, tf.float16)
-        accuracy = tf.reduce_mean(correct)
-        tf.summary.scalar(scope.name + '/accuracy', accuracy)
-    return accuracy
 
+def evaluation(logits, onehot):
+    with tf.variable_scope('accuracy') as scope:
+        labels = tf.argmax(onehot, axis=[1])
+        top_1 = tf.nn.in_top_k(logits, labels, 1)
+        top_2 = tf.nn.in_top_k(logits, labels, 2)
+        top_3 = tf.nn.in_top_k(logits, labels, 3)
+        top_1 = tf.reduce_mean(tf.cast(top_1, tf.float16))
+        top_2 = tf.reduce_mean(tf.cast(top_2, tf.float16))
+        top_3 = tf.reduce_mean(tf.cast(top_3, tf.float16))
+        tf.summary.scalar(scope.name + '/top_1', top_1)
+        tf.summary.scalar(scope.name + '/top_2', top_2)
+        tf.summary.scalar(scope.name + '/top_3', top_3)
+    return top_1

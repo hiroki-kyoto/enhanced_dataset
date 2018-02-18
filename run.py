@@ -12,7 +12,7 @@ from PIL import Image as pi
 import numpy as np
 
 # Training
-root_dir = 'C:/Users/work/Desktop/shigoto/ship-detection'
+root_dir = 'E:/code/workspace/enhanced_dataset'
 train_dir = root_dir + '/train_crop/'
 test_dir = root_dir + '/test_crop/'
 alexnet_log_dir = root_dir + '/alexnet_log/'
