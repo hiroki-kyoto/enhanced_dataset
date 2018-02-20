@@ -7,6 +7,7 @@ def get_files(filename):
     labels_train = []
     dirs = os.listdir(filename)
     dirs.sort()
+    print(dirs)
     for i in range(len(dirs)):
         class_path = os.path.join(filename, dirs[i])
         for image in os.listdir(class_path):

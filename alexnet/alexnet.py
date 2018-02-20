@@ -1,4 +1,3 @@
-import os
 import numpy as np
 import tensorflow as tf
 
@@ -7,7 +6,7 @@ class AlexNetLoader:
     AlexNet model loader
     '''
     def __init__(self, model_dir):
-        self.N_CLASSES = 6
+        self.N_CLASSES = 7
         self.IMG_W = 227
         self.IMG_H = 227
         self.BATCH_SIZE = 1

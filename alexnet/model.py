@@ -249,16 +249,18 @@ def training(loss, learning_rate):
     return train_op
 
 
-def evaluation(logits, onehot):
+def evaluation_with_onehot(logits, onehot):
     with tf.variable_scope('accuracy') as scope:
         labels = tf.argmax(onehot, axis=1)
         top_1 = tf.nn.in_top_k(logits, labels, 1)
-        top_2 = tf.nn.in_top_k(logits, labels, 2)
-        top_3 = tf.nn.in_top_k(logits, labels, 3)
         top_1 = tf.reduce_mean(tf.cast(top_1, tf.float16))
-        top_2 = tf.reduce_mean(tf.cast(top_2, tf.float16))
-        top_3 = tf.reduce_mean(tf.cast(top_3, tf.float16))
         tf.summary.scalar(scope.name + '/top_1', top_1)
-        tf.summary.scalar(scope.name + '/top_2', top_2)
-        tf.summary.scalar(scope.name + '/top_3', top_3)
+    return top_1
+
+
+def evaluation(logits, labels):
+    with tf.variable_scope('accuracy') as scope:
+        top_1 = tf.nn.in_top_k(logits, labels, 1)
+        top_1 = tf.reduce_mean(tf.cast(top_1, tf.float16))
+        tf.summary.scalar(scope.name + '/top_1', top_1)
     return top_1

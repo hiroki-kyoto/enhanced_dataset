@@ -49,7 +49,6 @@ class ResNetLoader:
                     model_fn = res_net_model,
                     model_dir = model_path
             )
-            print(self.classifier)
             self.ready = True
         
         self.im_w = W # width
@@ -77,7 +76,6 @@ class ResNetLoader:
             label_id = 0
             for i in res:
                 label_id = i['class']
-        #return self.labels[label_id]
         return label_id
     
     def free(self):

@@ -23,6 +23,10 @@ def load_images_and_labels(dir):
             im = pi.open(image_path)
             im = im.resize([W,H])
             im_arr = np.array(im, dtype=np.float32)
+            if len(im_arr.shape)!=3:
+                print(im_arr.shape)
+                print(image_path)
+                assert(False)
             assert(len(im_arr.shape)==3)
             assert(im_arr.shape[2]==3)
             images.append(im_arr)
@@ -43,9 +47,9 @@ def resnet_train(data_dir, log_dir):
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
             x = {'x' : images},
             y = labels.astype(np.int32),
-            batch_size = 8,
+            batch_size = BATCH_SIZE,
             num_epochs = None, # not defined here
             shuffle = True
     )
-    classifier.train(input_fn = train_input_fn, steps=20000)
+    classifier.train(input_fn = train_input_fn, steps=100000)
     print('training done.')
