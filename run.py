@@ -13,8 +13,8 @@ import numpy as np
 
 # Training
 root_dir = 'E:/code/workspace/enhanced_dataset'
-train_dir = root_dir + '/train_crop/'
-test_dir = root_dir + '/test_crop/'
+train_dir = root_dir + '/train/'
+test_dir = root_dir + '/test/'
 alexnet_log_dir = root_dir + '/alexnet_log/'
 resnet_log_dir = root_dir + '/resnet_log/'
 
