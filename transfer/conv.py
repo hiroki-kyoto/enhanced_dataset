@@ -2,10 +2,9 @@
 # A define header is required for project
 DEF_CONV = 1
 
-# SPARSITY THRESHOLD
-SPARSITY_THRESHOLD = 1e-1
-
 import numpy as np
+
+
 
 # matrix
 # Big different is:
@@ -32,10 +31,9 @@ class Matrix(object):
         self.indices = set()
         for i in range(self.dims[0]):
             for j in range(self.dims[1]):
-                if abs(self.values[i, j]) >= SPARSITY_THRESHOLD:
+                if self.values[i, j] != 0:
                     self.indices.add((i, j))
-                else:
-                    self.values[i, j] = 0.0
+
 
     def __str__(self):
         _str_ = ''
@@ -55,10 +53,9 @@ class Matrix(object):
             m.values[i,j] += self.values[i,j]
         for i,j in other.indices:
             m.values[i,j] += other.values[i,j]
-            if abs(m.values[i,j]) >= SPARSITY_THRESHOLD:
+            if m.values[i,j] != 0:
                 m.indices.add((i,j))
             else:
-                m.values[i,j] = 0.0
                 m.indices.remove((i,j))
         return m
 
