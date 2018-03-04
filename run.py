@@ -8,7 +8,6 @@ from alexnet import input_data as alexnet_input_data
 from resnet import resnet_chao as resnet_loader
 import sys
 import os
-from PIL import Image as pi
 import numpy as np
 
 # Training
@@ -65,14 +64,14 @@ elif sys.argv[1]=='test':
             files = os.listdir(subdir)
             for fn in files:
                 images.append(
-                    pi.open(os.path.join(subdir, fn))
+                    os.path.join(subdir, fn)
                 )
                 labels.append(i)
         correct_num = np.zeros(len(dirs))
         expected_num = np.zeros(len(dirs))
         predicted_num = np.zeros(len(dirs))
         for i in range(len(images)):
-            pred = _loader.classify(images[i])
+            pred = _loader.classify_with_image_path(images[i])
             if pred == labels[i]:
                 correct_num[pred] += 1
             expected_num[labels[i]] += 1

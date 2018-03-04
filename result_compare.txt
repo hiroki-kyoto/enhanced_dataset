@@ -62,6 +62,13 @@
            Supply-Vessel           25.00%          27.27%
         Overall accuracy:       27.78%
 
+        [L2 loss]
+
+
+
+
+
+
 
 
 

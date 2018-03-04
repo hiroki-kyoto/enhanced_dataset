@@ -59,6 +59,7 @@ class ShipNet(object):
                 strides=[1, 2, 2, 1],
                 padding='SAME',
             )
+            self.pool1 = self.conv1_2
 
             # second group of convolution layers
             self.conv2_1_W = self.vgg_param['conv2_1_W']
@@ -89,6 +90,7 @@ class ShipNet(object):
                 strides=[1, 2, 2, 1],
                 padding='SAME'
             )
+            self.pool2 = self.conv2_2
 
             # the third convolutional layers
             self.conv3_1_W = self.vgg_param['conv3_1_W']

@@ -33,17 +33,17 @@ def res_net_model(features, labels, mode):
     with tf.variable_scope('conv1'):
         net = tf.layers.conv2d(
             x,
-            filters=7,
+            filters=5,
             kernel_size=3,
             activation=tf.nn.relu,
             padding='valid',
-            strides= (2,2)
+            strides= 2
         )
     #net = tf.layers.batch_normalization(net, name='bn1')
 
     # Max pool
     with tf.variable_scope('pool1'):
-        net = tf.layers.average_pooling2d(
+        net = tf.layers.max_pooling2d(
             net,
             pool_size=3,
             strides=2,
@@ -58,7 +58,7 @@ def res_net_model(features, labels, mode):
             kernel_size=3,
             activation=tf.nn.relu,
             padding='valid',
-            strides=(2,2)
+            strides=2
         )
     #net = tf.layers.batch_normalization(net, name='bn2')
 
@@ -84,7 +84,7 @@ def res_net_model(features, labels, mode):
                     kernel_size=1,
                     padding='same',
                     activation=tf.nn.relu)
-                conv = tf.layers.batch_normalization(conv)
+                #conv = tf.layers.batch_normalization(conv)
 
             with tf.variable_scope(name + '/conv_bottleneck'):
                 conv = tf.layers.conv2d(
@@ -93,7 +93,7 @@ def res_net_model(features, labels, mode):
                     kernel_size=3,
                     padding='same',
                     activation=tf.nn.relu)
-                conv = tf.layers.batch_normalization(conv)
+                #conv = tf.layers.batch_normalization(conv)
 
             # 1x1 convolution responsible for restoring dimension
             with tf.variable_scope(name + '/conv_out'):
@@ -104,7 +104,7 @@ def res_net_model(features, labels, mode):
                     kernel_size=1,
                     padding='same',
                     activation=tf.nn.relu)
-                conv = tf.layers.batch_normalization(conv)
+                #conv = tf.layers.batch_normalization(conv)
 
             # shortcut connections that turn the network into its counterpart
             # residual function (identity shortcut)
@@ -124,21 +124,24 @@ def res_net_model(features, labels, mode):
         except IndexError:
             pass
 
+    net_shape = net.get_shape().as_list()
+    print(net_shape)
     net = tf.layers.max_pooling2d(
         net,
-        pool_size=3,
-        strides=2,
+        pool_size=[net_shape[1], net_shape[2]],
+        strides=1,
         padding='valid'
     )
 
     net_shape = net.get_shape().as_list()
+    print(net_shape)
     net = tf.reshape(net, [-1, net_shape[1] * net_shape[2] * net_shape[3]])
 
     # Compute logits (1 per class) and compute loss.
     logits = tf.layers.dense(net, N_DIGITS, activation=None)
 
     # Compute predictions.
-    predicted_classes = tf.argmax(logits, 1)
+    predicted_classes = tf.argmax(logits, axis=1)
     if mode == tf.estimator.ModeKeys.PREDICT:
         predictions = {
             'class': predicted_classes,
@@ -148,12 +151,21 @@ def res_net_model(features, labels, mode):
 
     # Compute loss.
     label_tensor = tf.cast(labels, tf.int32)
-    onehot_labels = tf.one_hot(label_tensor, N_DIGITS, 1, 0)
-    loss = tf.losses.softmax_cross_entropy(
-        onehot_labels=onehot_labels, logits=logits)
-    top_1 = tf.nn.in_top_k(logits, tf.cast(labels, tf.int64), 1)
-    top_1 = tf.reduce_mean(tf.cast(top_1, tf.float32))
-
+    onehot = tf.one_hot(label_tensor, N_DIGITS, on_value=1.0, off_value=0.0)
+    # xentropy loss
+    #loss = tf.losses.softmax_cross_entropy(
+    #    onehot_labels=onehot, logits=logits)
+    # L2 loss
+    logits_max = tf.reduce_max(logits, axis=[1])
+    logits_max = tf.reshape(logits_max, [logits_max.shape[0], 1])
+    logits_min = tf.reduce_min(logits, axis=[1])
+    logits_min = tf.reshape(logits_min, [logits_min.shape[0], 1])
+    logits_dif = logits_max - logits_min
+    logits_dif = tf.maximum(logits_dif, 1.0)
+    logits_std = (logits - logits_min) / logits_dif
+    err = logits_std - onehot
+    err = tf.reduce_sum(tf.square(err), axis=[1])
+    loss = tf.reduce_mean(err, name='loss-mean')
     # Compute evaluation metrics.
     eval_metric_ops = {
         'accuracy': tf.metrics.accuracy(

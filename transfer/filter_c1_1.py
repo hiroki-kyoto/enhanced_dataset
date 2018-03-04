@@ -41,29 +41,28 @@ def f(x, w, b):
             y = y[0,:,:,0]
             return y
 
+def sparse(x, threshold):
+    cond = x < threshold
+    x[cond] = 0.0
+    return x
+
 def main():
     net = ShipNet(VGG16_PARAM_FILE)
-    w = net.conv1_1_W[:, :, :, 52]
-    b = net.conv1_1_b[52]
+    w = net.conv1_1_W[:, :, :, [7,46,52]]
+    b = net.conv1_1_b[[7,46,52]]
     cond = np.abs(w) < 0.1
     w[cond] = 0
-
-    image = pi.open(ROOT_PATH+'/train/051-Destroyer/qz88.jpg')
+    image = pi.open(ROOT_PATH+'/train/052-Destroyer/qz2.jpg')
     x = np.array(image, dtype=np.float32)
     x = x - RGB_MEAN
-    y = f(x, w, b)*256
+    y1 = f(x, w[0], b[0])*256
+    y2 = f(x, w[1], b[1])*256
+    y3 = f(x, w[2], b[2])*256
+    y = np.minimum(y1, y2)
+    y = np.minimum(y, y3)
     im = pi.fromarray(y)
     im.show()
-    # apply filter again
-    w_single = np.mean(w, axis=(2)).astype(np.float32)
-    w_single = w_single.reshape(w_single.shape[0], w_single.shape[1], 1)
-    x_single = y - np.mean(np.array(RGB_MEAN)).astype(np.float32)
-    x_single = x_single.reshape(x_single.shape[0], x_single.shape[1], 1)
-    print(x_single.shape)
-    y1 = f(x_single, w_single, b) * 256
 
-    im1 = pi.fromarray(y1)
-    im1.show()
 
 
 main()

@@ -77,6 +77,30 @@ class ResNetLoader:
             for i in res:
                 label_id = i['class']
         return label_id
+
+    def classify_with_image_path(self, image_path):
+        print(image_path)
+        img = Image.open(image_path)
+        im = img.resize([self.im_w, self.im_h])
+        im_data = np.array(im, dtype=np.float32)
+        assert len(im_data.shape)==3 and im_data.shape[2]==3
+        im_data = np.reshape(
+                im_data,
+                [1, im_data.shape[0], im_data.shape[1], im_data.shape[2]]
+        )
+        with self.graph.as_default():
+            test_input_fn = tf.estimator.inputs.numpy_input_fn(
+                    x={INPUT_NAME: im_data},
+                    y=np.zeros([1]),
+                    num_epochs=1,
+                    shuffle=False
+            )
+            res = self.classifier.predict(input_fn = test_input_fn)
+            label_id = -1
+            for i in res:
+                label_id = i['class']
+                print(i)
+        return label_id
     
     def free(self):
         # do nothing
