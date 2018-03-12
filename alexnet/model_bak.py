@@ -1,26 +1,6 @@
 #coding=utf-8
 import tensorflow as tf
-import numpy as np
 
-# VGG-16 model file path
-ROOT_PATH = 'E:/code/workspace/enhanced_dataset'
-VGG16_PARAM_FILE = ROOT_PATH + "/vgg16/vgg16_weights.npz"
-
-# using VGG-16 filters
-def preprocess(images):
-    param = np.load(VGG16_PARAM_FILE)
-    conv1_1_W = param['conv1_1_W']
-    conv1_1_b = param['conv1_1_b']
-    w = conv1_1_W[:, :, :, [7, 46, 52]]
-    b = conv1_1_b[[7, 46, 52]]
-    cond = np.abs(w) < 0.1
-    w[cond] = 0
-
-    map1 = f(x, w[0], b[0])
-    map2 = f(x, w[1], b[1])
-    map3 = f(x, w[2], b[2])
-    y = np.minimum(y1, y2)
-    y = np.minimum(y, y3)
 
 def inference4train(train_batch, n_classes):
     with tf.variable_scope("weights"):
@@ -132,11 +112,9 @@ def inference4train(train_batch, n_classes):
         }
 
     images = tf.reshape(train_batch, shape=[-1, 227, 227, 3])
-    # add preprocessing module using trained filters of VGG16
-    maps = preprocess(images)
     conv1 = tf.nn.bias_add(
         tf.nn.conv2d(
-            maps,
+            images,
             weights['conv1'],
             strides=[1, 4, 4, 1],
             padding='VALID'

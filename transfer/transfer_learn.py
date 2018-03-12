@@ -10,7 +10,7 @@ def main():
     im = im.resize([IMG_W,IMG_H])
     x = np.array(im, np.float32)
     x = np.reshape(x, [1, IMG_H, IMG_W, IMG_C])
-    y = net.run_part(net.x, net.conv3_2, x)
+    y = net.run_part(net.x, net.conv1_1, x)
     y = y[0]
     y = np.transpose(y, [2,0,1])
     for filter_id in range(y.shape[0]):
