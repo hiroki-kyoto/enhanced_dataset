@@ -2,12 +2,38 @@
 import tensorflow as tf
 import numpy as np
 
+RGB_MEAN = [123.68,116.779,103.939]
+
 # VGG-16 model file path
-ROOT_PATH = 'E:/code/workspace/enhanced_dataset'
-VGG16_PARAM_FILE = ROOT_PATH + "/vgg16/vgg16_weights.npz"
+ROOT_PATH = 'C:/Users/work/Desktop/shigoto/'
+VGG16_PARAM_FILE = ROOT_PATH + "/tensorflow-vgg16-master/vgg16_weights.npz"
+
+# min-max normalization
+# x is required to be a 4D tensor with data-format of 'NHWC'
+def min_max_normalize(x):
+    # transform from NHWC format to NCHW format
+    _max = tf.reduce_max(x, axis=[1,2])
+    _min = tf.reduce_min(x, axis=[1,2])
+    _max = tf.reshape(_max, [_max.shape[0], 1, 1, _max.shape[1]])
+    _min = tf.reshape(_min, [_min.shape[0], 1, 1, _min.shape[1]])
+    _dif = _max - _min
+    _dif = tf.maximum(_dif, 1.0)
+    x = tf.minimum((x-_min)/_dif, 255.0/256.0)
+    return x
+
+# to get sparse maps
+def sparse(x, threshold):
+    mask = x > threshold
+    mask = tf.cast(mask, tf.float32)
+    return mask
+
+# to apply the sparsity mask
+def apply_mask(x, mask):
+    return x * mask
 
 # using VGG-16 filters
 def preprocess(images):
+    x = images - RGB_MEAN
     param = np.load(VGG16_PARAM_FILE)
     conv1_1_W = param['conv1_1_W']
     conv1_1_b = param['conv1_1_b']
@@ -15,12 +41,61 @@ def preprocess(images):
     b = conv1_1_b[[7, 46, 52]]
     cond = np.abs(w) < 0.1
     w[cond] = 0
+    preprocess_w = tf.get_variable(
+        name='preprocess_weights',
+        initializer=w,
+        trainable=False
+    )
+    preprocess_b = tf.get_variable(
+        name='preprocess_bias',
+        initializer=b,
+        trainable=False
+    )
+    # convolve the images
+    maps = tf.nn.conv2d(
+        input=x,
+        filter=preprocess_w,
+        strides=[1,1,1,1],
+        padding='SAME',
+        use_cudnn_on_gpu=False,
+        data_format='NHWC',
+        name='preprocess_conv2d'
+    )
+    maps = tf.nn.bias_add(
+        value=maps,
+        bias=preprocess_b,
+        data_format='NHWC',
+        name='preprocess_conv2d'
+    )
+    # nonlinear transform
+    maps = tf.nn.relu(
+        features=maps
+    )
+    # normalize the maps
+    maps = min_max_normalize(maps)
+    maps = tf.nn.max_pool(
+        maps,
+        ksize=[1,3,3,1],
+        strides=[1,1,1,1],
+        padding='SAME'
+    )
+    # syntheses all filters as noise reduction module
+    maps = tf.reduce_min(
+        input_tensor=maps,
+        axis=[3]
+    )
+    # get sparse masks of maps
+    masks = sparse(maps, 0.1)
+    # require a shape match
+    masks = tf.reshape(
+        masks,
+        [masks.shape[0],masks.shape[1],masks.shape[2],1]
+    )
+    maps = apply_mask(images, masks)
 
-    map1 = f(x, w[0], b[0])
-    map2 = f(x, w[1], b[1])
-    map3 = f(x, w[2], b[2])
-    y = np.minimum(y1, y2)
-    y = np.minimum(y, y3)
+    return maps
+
+
 
 def inference4train(train_batch, n_classes):
     with tf.variable_scope("weights"):
@@ -132,8 +207,12 @@ def inference4train(train_batch, n_classes):
         }
 
     images = tf.reshape(train_batch, shape=[-1, 227, 227, 3])
+    images = tf.cast(images, tf.float32)
     # add preprocessing module using trained filters of VGG16
     maps = preprocess(images)
+    #maps = tf.cast(maps, tf.uint8)
+    #return maps
+    maps = maps - RGB_MEAN
     conv1 = tf.nn.bias_add(
         tf.nn.conv2d(
             maps,

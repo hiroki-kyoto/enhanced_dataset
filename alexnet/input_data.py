@@ -2,8 +2,6 @@
 import tensorflow as tf
 import os
 
-RGB_MEAN = [123.68,116.779,103.939]
-
 def get_files(filename):
     images_train = []
     labels_train = []
@@ -53,13 +51,12 @@ def get_batches_with_onehot(
         images_binary,
         channels=3
     )
-    images = tf.image.resize_image_with_crop_or_pad(
+    images = tf.image.resize_images(
         images_decoded,
-        resize_w,
-        resize_h
+        [resize_w, resize_h]
     )
     #images = tf.image.per_image_standardization(images)
-    images = images - RGB_MEAN
+    #images = images - RGB_MEAN
     image_batches, label_batches = tf.train.batch(
         [images, labels],
         batch_size=batch_size,

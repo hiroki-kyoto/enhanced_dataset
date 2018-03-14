@@ -2,8 +2,8 @@
 import tensorflow as tf
 import numpy as np
 
-ROOT_PATH = 'E:/code/workspace/enhanced_dataset'
-VGG16_PARAM_FILE = ROOT_PATH + "/vgg16/vgg16_weights.npz"
+ROOT_PATH = 'C:/Users/work/Desktop/shigoto'
+VGG16_PARAM_FILE = ROOT_PATH + "/tensorflow-vgg16-master/vgg16_weights.npz"
 IMG_N = 1
 IMG_H = 224
 IMG_W = 224

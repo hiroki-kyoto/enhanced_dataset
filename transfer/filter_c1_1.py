@@ -33,7 +33,8 @@ def f(x, w, b):
             # a max pooling
             tf_y = min_max_normalize(tf_y)
             tf_y = tf.nn.max_pool(
-                tf_y, ksize=[1,3,3,1],
+                tf_y,
+                ksize=[1,3,3,1],
                 strides=[1,1,1,1],
                 padding='SAME'
             )
@@ -53,7 +54,7 @@ def main():
     b = net.conv1_1_b[[7,46,52]]
     cond = np.abs(w) < 0.1
     w[cond] = 0
-    image = pi.open(ROOT_PATH+'/train/051-Destroyer/qz96.jpg')
+    image = pi.open(ROOT_PATH+'/ship-detection/train/051-Destroyer/qz96.jpg')
     image = image.resize([320, 320])
     im_data = np.array(image, dtype=np.float32)
     x = im_data - RGB_MEAN

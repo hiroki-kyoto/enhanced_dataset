@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import alexnet.model
 
 class AlexNetLoader:
     '''
@@ -202,22 +203,21 @@ class AlexNetLoader:
         self.im_path = tf.placeholder(dtype = tf.string)
         self.image_c = tf.read_file(self.im_path)
         self.image = tf.image.decode_jpeg(self.image_c, channels=3)
-        self.image_resized = tf.image.resize_image_with_crop_or_pad(
-                self.image, 
-                self.IMG_W,
-                self.IMG_H
+        self.image_resized = tf.image.resize_images(
+            self.image,
+            [self.IMG_W, self.IMG_H],
+            method=0
         )
-        self.image_std = tf.image.per_image_standardization(
-                self.image_resized
-        )
-        self.image_input = tf.cast(
-                self.image_std, 
+        self.image_resized = tf.cast(
+                self.image_resized,
                 tf.float32
         )
+        self.images_preprocessed = model.preprocess(self.image_resized)
+        self.images_preprocessed -= model.RGB_MEAN
         # network graph
         self.conv1 = tf.nn.bias_add(
                 tf.nn.conv2d(
-                    [self.image_input],
+                    [self.images_preprocessed],
                     self.weights['conv1'],
                     strides = [1, 4, 4, 1], 
                     padding = 'VALID'

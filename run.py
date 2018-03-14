@@ -1,7 +1,8 @@
 # Using tensorflow 1.4.0
 # The models: Alexnet, Resnet
 
-from alexnet import training as alexnet_train
+#from alexnet import training as alexnet_train
+from alexnet import acc_trans_learn as alexnet_train
 from resnet import resnet_train as resnet_train
 from alexnet import alexnet as alexnet_loader
 from alexnet import input_data as alexnet_input_data
@@ -11,7 +12,7 @@ import os
 import numpy as np
 
 # Training
-root_dir = 'E:/code/workspace/enhanced_dataset'
+root_dir = 'C:/Users/work/Desktop/shigoto/ship-detection/'
 train_dir = root_dir + '/train/'
 test_dir = root_dir + '/test/'
 alexnet_log_dir = root_dir + '/alexnet_log/'
@@ -21,7 +22,7 @@ assert(len(sys.argv)>=3)
 _loader = None
 if sys.argv[1]=='train':
     if sys.argv[2]=='alexnet':
-        alexnet_train.train(train_dir, alexnet_log_dir)
+        alexnet_train.train_with_onehot(train_dir, alexnet_log_dir)
     elif sys.argv[2]=='resnet':
         resnet_train.resnet_train(train_dir, resnet_log_dir)
     else:
