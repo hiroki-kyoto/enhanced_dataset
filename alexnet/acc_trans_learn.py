@@ -8,7 +8,7 @@ from PIL import Image as pi
 import alexnet.input_data as input_data
 import alexnet.model as model
 
-N_CLASSES = 6
+N_CLASSES = 2
 IMG_W = 227
 IMG_H = 227
 BATCH_SIZE = 8

@@ -1,13 +1,13 @@
 import numpy as np
 import tensorflow as tf
-import alexnet.model
+import alexnet.model as model
 
 class AlexNetLoader:
     '''
     AlexNet model loader
     '''
     def __init__(self, model_dir):
-        self.N_CLASSES = 7
+        self.N_CLASSES = 6
         self.IMG_W = 227
         self.IMG_H = 227
         self.BATCH_SIZE = 1
@@ -205,14 +205,15 @@ class AlexNetLoader:
         self.image = tf.image.decode_jpeg(self.image_c, channels=3)
         self.image_resized = tf.image.resize_images(
             self.image,
-            [self.IMG_W, self.IMG_H],
-            method=0
+            [self.IMG_W, self.IMG_H]
         )
         self.image_resized = tf.cast(
                 self.image_resized,
                 tf.float32
         )
+        self.image_resized = tf.reshape(self.image_resized, shape=[-1,self.IMG_H, self.IMG_W, 3])
         self.images_preprocessed = model.preprocess(self.image_resized)
+        self.images_preprocessed = tf.reshape(self.images_preprocessed, shape=[self.IMG_H, self.IMG_W, 3])
         self.images_preprocessed -= model.RGB_MEAN
         # network graph
         self.conv1 = tf.nn.bias_add(

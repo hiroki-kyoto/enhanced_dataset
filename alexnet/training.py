@@ -6,13 +6,13 @@ import tensorflow as tf
 import alexnet.input_data as input_data
 import alexnet.model as model
 
-N_CLASSES = 6
+N_CLASSES = 2
 IMG_W = 227
 IMG_H = 227
 BATCH_SIZE = 8
 CAPACITY = 200
 MAX_STEP = 10000
-learning_rate = 0.001
+learning_rate = 0.0001
 PRINT_STEP = 30
 SAVE_STEP = 500
 

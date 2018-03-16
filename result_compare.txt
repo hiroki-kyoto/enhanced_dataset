@@ -66,7 +66,47 @@
 
 
 
+======= 051-052 test + Min-max Norm + L2 loss  ==========
+    051-Destroyer           92.00%          89.32%
+    052-Destroyer           89.00%          91.75%
+Overall accuracy:       90.50%
 
+======= 051-052 test + Xentropy Loss ====================
+                Category          Recall        Precision
+           051-Destroyer           86.00%          86.00%
+           052-Destroyer           86.00%          86.00%
+Overall accuracy:       86.00%
+
+======= 051-052 test + 1 layer transfer learning ========
+                Category          Recall        Precision
+           051-Destroyer           91.00%          81.25%
+           052-Destroyer           79.00%          89.77%
+Overall accuracy:       85.00%
+
+======= 051-052 test + 2 layers transfer learning =======
+                Category          Recall        Precision
+           051-Destroyer           88.00%          96.70%
+           052-Destroyer           97.00%          88.99%
+Overall accuracy:       92.50%
+
+======= 051-052 test + 3 layers transfer learning =======
+                Category          Recall        Precision
+           051-Destroyer           80.00%          87.91%
+           052-Destroyer           89.00%          81.65%
+Overall accuracy:       84.50%
+
+======= 051-052 test + 4 layers transfer learning =======
+                 Category          Recall        Precision
+           051-Destroyer           93.00%          91.18%
+           052-Destroyer           91.00%          92.86%
+Overall accuracy:       92.00%
+
+======= 051-052 test + 5 layers transfer learning =======
+Test results:
+                Category          Recall        Precision
+           051-Destroyer           85.00%          92.39%
+           052-Destroyer           93.00%          86.11%
+Overall accuracy:       89.00%
 
 
 

@@ -1,8 +1,8 @@
 # Using tensorflow 1.4.0
 # The models: Alexnet, Resnet
 
-#from alexnet import training as alexnet_train
-from alexnet import acc_trans_learn as alexnet_train
+from alexnet import training as alexnet_train
+#from alexnet import acc_trans_learn as alexnet_train
 from resnet import resnet_train as resnet_train
 from alexnet import alexnet as alexnet_loader
 from alexnet import input_data as alexnet_input_data
