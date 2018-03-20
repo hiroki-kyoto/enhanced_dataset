@@ -56,7 +56,7 @@ class ShipNet(object):
             self.pool1 = tf.nn.max_pool(
                 self.conv1_2,
                 ksize=[1, 2, 2, 1],
-                strides=[1, 2, 2, 1],
+                strides=[1, 1, 1, 1],
                 padding='SAME',
             )
             self.pool1 = self.conv1_2
@@ -87,7 +87,7 @@ class ShipNet(object):
             self.pool2 = tf.nn.max_pool(
                 self.conv2_2,
                 ksize=[1, 2, 2, 1],
-                strides=[1, 2, 2, 1],
+                strides=[1, 1, 1, 1],
                 padding='SAME'
             )
             self.pool2 = self.conv2_2
@@ -129,7 +129,7 @@ class ShipNet(object):
             self.pool3 = tf.nn.max_pool(
                 self.conv3_3,
                 ksize=[1, 2, 2, 1],
-                strides=[1, 2, 2, 1],
+                strides=[1, 1, 1, 1],
                 padding='SAME'
             )
 
@@ -170,7 +170,7 @@ class ShipNet(object):
             self.pool4 = tf.nn.max_pool(
                 self.conv4_3,
                 ksize=[1, 2, 2, 1],
-                strides=[1, 2, 2, 1],
+                strides=[1, 1, 1, 1],
                 padding='SAME'
             )
 
@@ -211,7 +211,7 @@ class ShipNet(object):
             self.pool5 = tf.nn.max_pool(
                 self.conv5_3,
                 ksize=[1, 2, 2, 1],
-                strides=[1, 2, 2, 1],
+                strides=[1, 1, 1, 1],
                 padding='SAME'
             )
 

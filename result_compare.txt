@@ -102,11 +102,33 @@ Overall accuracy:       84.50%
 Overall accuracy:       92.00%
 
 ======= 051-052 test + 5 layers transfer learning =======
-Test results:
                 Category          Recall        Precision
            051-Destroyer           85.00%          92.39%
            052-Destroyer           93.00%          86.11%
 Overall accuracy:       89.00%
+
+======= 051-052 test + 6 layers transfer learning =======
+                Category          Recall        Precision
+           051-Destroyer           93.00%          96.88%
+           052-Destroyer           97.00%          93.27%
+Overall accuracy:       95.00%
+
+======= 051-052 test + 7 layers transfer learning =======
+                Category          Recall        Precision
+           051-Destroyer           89.00%          95.70%
+           052-Destroyer           96.00%          89.72%
+Overall accuracy:       92.50%
+
+======= 051-052 test + 8 layers transfer learning =======
+                Category          Recall        Precision
+           051-Destroyer           85.00%          95.51%
+           052-Destroyer           96.00%          86.49%
+Overall accuracy:       90.50%
+======= 051-052 test + 9 layers transfer learning =======
+                Category          Recall        Precision
+           051-Destroyer           95.00%          76.61%
+           052-Destroyer           71.00%          93.42%
+Overall accuracy:       83.00%
 
 
 
